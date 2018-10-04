@@ -7,10 +7,12 @@ import by.comaqa.advanced.tests.pagewidgets.login.LoginWidget;
 import com.codeborne.selenide.*;
 import org.junit.jupiter.api.*;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 /**
@@ -63,11 +65,23 @@ public class CRMTest
 
 
     }
+    @Test
     public void deleteContact(){
         // find test contacts
+        new SearchContacts().filterText("TestFN");
+        sleep(1000);
+        new ContactsTable().table.shouldBe(visible);
+        int hits=new ContactsTable().rows.size();
+        Assumptions.assumeTrue(hits>0, "no TestFN contacts found");
         // delete the first one
+        String contractName=new ContactsTable().getNameOfContactFromRow(new ContactsTable().firstRow).getText();
+        System.out.println(contractName);
+        new ContactsTable().openDetailsOfContact(new ContactsTable().firstRow);
+        new ContactDetails().deleteContact();
         // search contact in the table
+        new SearchContacts().filterText(contractName);
         // assert nothing found
+        new ContactsTable().rows.shouldHaveSize(0);
 
     }
 }
