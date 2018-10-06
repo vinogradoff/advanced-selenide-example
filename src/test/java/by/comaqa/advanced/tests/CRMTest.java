@@ -36,7 +36,8 @@ public class CRMTest
     @Test
     public void createContact() {
 
-        // create contact with name & email
+
+        // region create contact with name & email
 
         // click create
         new ActionsPanel().create();
@@ -47,26 +48,33 @@ public class CRMTest
         new EditContactDetails().saveContact();
         new MainMenu().openInSalesAndMarketing("Contacts");
 
-        // search contact in the table
+        // endregion
+
+        // region search contact in the table
         new SearchContacts().filterText("TestFN"+now);
         new ContactsTable().rows.shouldHaveSize(1);
-        // assert name & email
+        // endregion
+
+        // region assert name & email
         new ContactsTable().firstRow.shouldHave(text("TestFN"+now))
                 .shouldHave(text("TestLN"+now))
                 .shouldHave(text("host.by"));
                 //.shouldHave(text("mail"+now+"@host.by"));
+
+        //endregion
     }
 
     @Test
     public void editContact(){
 
-        // find test contacts
+        // region find test contacts
         new SearchContacts().filterText("TestFN");
-        //new StatusMessage().status.shouldHave(text("Loading..."));
         new ContactsTable().table.shouldBe(visible);
         int hits=new ContactsTable().rows.size();
         Assumptions.assumeTrue(hits>0, "no TestFN contacts found");
-        // edit the first one
+        //endregion
+
+        // region edit the first one
         String contractName=new ContactsTable().getNameOfContactFromRow(new ContactsTable().firstRow).getText();
         System.out.println(contractName);
         new ContactsTable().openDetailsOfContact(new ContactsTable().firstRow);
@@ -77,34 +85,46 @@ public class CRMTest
         // edit email
         new EditContactDetails().enterPrimaryEmail("edited@host.by");
         new EditContactDetails().saveContact();
+
+        // endregion
+
+        // region search contact in the table
         new MainMenu().openInSalesAndMarketing("Contacts");
-        // search contact in the table
         new SearchContacts().filterText("TestFN"+editingTime);
-        // assert changes
+
+        // endregion
+
+        // region assert changes
         new ContactsTable().rows.shouldHaveSize(1);
         new ContactsTable().firstRow.shouldHave(text("TestFN"+editingTime))
                 .shouldHave(text("TestLN"+editingTime))
                 .shouldHave(text("edited@host.by"));
 
+        //endregion
 
     }
+
     @Test
     public void deleteContact(){
-        // find test contacts
+        // region find test contacts
         new SearchContacts().filterText("TestFN");
         //sleep(1000);
         new ContactsTable().table.shouldBe(visible);
         int hits=new ContactsTable().rows.size();
         Assumptions.assumeTrue(hits>0, "no TestFN contacts found");
-        // delete the first one
+        // endregion
+        // region delete the first one
         String contractName=new ContactsTable().getNameOfContactFromRow(new ContactsTable().firstRow).getText();
         System.out.println(contractName);
         new ContactsTable().openDetailsOfContact(new ContactsTable().firstRow);
         new ContactDetails().deleteContact();
-        // search contact in the table
+        // endregion
+        // region search contact in the table
         new SearchContacts().filterText(contractName);
-        // assert nothing found
+        //endregion
+        // region assert nothing found
         new ContactsTable().rows.shouldHaveSize(0);
+        // endregion
 
     }
 }
