@@ -6,11 +6,17 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class ContactDetails {
 
-  SelenideElement deleteBtn=$("button#DetailForm_delete");
+  SelenideElement deleteBtn=$("button#DetailForm_delete"),
+              editBtn=$("button#DetailForm_edit");
+
 
   public void deleteContact() {
     deleteBtn.click();
     Selenide.confirm();
+  }
+
+  public void startEditingContract(){
+    editBtn.click();
   }
 
 }
